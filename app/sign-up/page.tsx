@@ -8,6 +8,12 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+function isEduEmail(email: string) {
+  const m = email.trim().toLowerCase().match(/^[^@]+@([^@]+)$/);
+  const domain = m?.[1] || "";
+  return domain.endsWith(".edu");
+}
+
 export default function SignUpPage() {
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
@@ -20,16 +26,20 @@ export default function SignUpPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
+
+    if (!isEduEmail(email)) {
+      setErr("Please sign up with a .edu email address.");
+      return;
+    }
+
     setLoading(true);
     try {
       const cred = await createUserWithEmailAndPassword(auth, email.trim(), pw);
 
-      // Optional display name for quick UI
       await updateProfile(cred.user, {
         displayName: [first, last].filter(Boolean).join(" "),
       });
 
-      // Minimal user doc
       await setDoc(doc(db, "users", cred.user.uid), {
         firstName: first.trim(),
         lastName: last.trim(),
@@ -39,7 +49,6 @@ export default function SignUpPage() {
         createdAt: serverTimestamp(),
       });
 
-      // Go to their profile
       router.push(`/profile/${cred.user.uid}`);
     } catch (e: any) {
       setErr(e?.message ?? "Failed to sign up");
@@ -90,7 +99,7 @@ export default function SignUpPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900"
-            placeholder="you@berkeley.edu"
+            placeholder="you@anycampus.edu"
           />
         </div>
 

@@ -6,24 +6,34 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/src/firebase/firebaseConfig";
 import { useRouter } from "next/navigation";
 
-export default function RequireAuth({ children }: { children: React.ReactNode }) {
+type Props = { children: React.ReactNode; redirectTo?: string; blockWhenSignedOut?: boolean };
+
+/**
+ * Default behavior (no props): acts as a gate that only renders children when authed.
+ * If you pass blockWhenSignedOut=true, it will redirect to redirectTo (default "/") when signed out.
+ * This lets us reuse it both for layout gating (no redirect) and protected pages (with redirect).
+ */
+export default function RequireAuth({
+  children,
+  redirectTo = "/",
+  blockWhenSignedOut = false,
+}: Props) {
   const router = useRouter();
   const [ready, setReady] = React.useState(false);
+  const [authed, setAuthed] = React.useState(false);
 
   React.useEffect(() => {
     const off = onAuthStateChanged(auth, (u) => {
-      if (!u) router.replace("/"); // not logged in -> home
-      else setReady(true);
+      const isAuthed = !!u;
+      setAuthed(isAuthed);
+      setReady(true);
+      if (blockWhenSignedOut && !isAuthed) {
+        router.replace(redirectTo);
+      }
     });
     return () => off();
-  }, [router]);
+  }, [blockWhenSignedOut, redirectTo, router]);
 
-  if (!ready) {
-    return (
-      <div className="mx-auto flex min-h-[50vh] max-w-md items-center justify-center text-sm text-zinc-500">
-        Checking your session…
-      </div>
-    );
-  }
+  if (!ready || !authed) return null;
   return <>{children}</>;
 }

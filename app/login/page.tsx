@@ -7,6 +7,12 @@ import { auth } from "@/src/firebase/firebaseConfig";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+function isEduEmail(email: string) {
+  const m = email.trim().toLowerCase().match(/^[^@]+@([^@]+)$/);
+  const domain = m?.[1] || "";
+  return domain.endsWith(".edu");
+}
+
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -17,6 +23,12 @@ export default function SignInPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
+
+    if (!isEduEmail(email)) {
+      setErr("Please use a .edu email address.");
+      return;
+    }
+
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email.trim(), pw);
@@ -45,7 +57,7 @@ export default function SignInPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900"
-            placeholder="you@berkeley.edu"
+            placeholder="you@anycampus.edu"
           />
         </div>
 

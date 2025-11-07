@@ -30,16 +30,13 @@ export default function TopTabs({ active }: Props) {
   const toProfileHref = uid ? `/profile/${uid}` : "/login";
 
   return (
-    <header className="sticky top-0 z-20">
-      {/* Row 1: theme toggle on left, controls on right (visible on all sizes) */}
-      <div className="border-b border-zinc-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
+    <header className="z-20">
+      {/* Row 1: theme toggle on left, controls on right (normal flow, NOT sticky) */}
+      <div className="border-b border-zinc-200 bg-white/90">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          {/* Theme toggle on left for ALL screen sizes */}
           <div>
             <ThemeToggle />
           </div>
-          
-          {/* Controls on right */}
           <div className="flex items-center gap-2">
             <Link
               href={guardHref("/saved")}
@@ -92,9 +89,7 @@ export default function TopTabs({ active }: Props) {
                         className="text-2xl inline-block"
                         initial={false}
                         animate={isActive ? { scale: 1.06 } : { scale: 1 }}
-                        whileHover={
-                          isFood ? { scale: 1.15 } : isOpp ? { rotate: 360 } : undefined
-                        }
+                        whileHover={isFood ? { scale: 1.15 } : isOpp ? { rotate: 360 } : undefined}
                         transition={{ type: "spring", stiffness: 420, damping: 26 }}
                       >
                         {t.icon}
@@ -153,7 +148,7 @@ export default function TopTabs({ active }: Props) {
         </nav>
       </div>
 
-      {/* MOBILE bottom tabs only */}
+      {/* MOBILE bottom tabs fixed */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-zinc-200 bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-3xl grid grid-cols-3 text-center">
           {tabs.map((t) => {
@@ -166,9 +161,7 @@ export default function TopTabs({ active }: Props) {
                   ${isActive ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-800"}`}
               >
                 <span className="text-lg">{t.icon}</span>
-                <span className={`mt-0.5 ${isActive ? "underline underline-offset-4" : ""}`}>
-                  {t.label}
-                </span>
+                <span className={`mt-0.5 ${isActive ? "underline underline-offset-4" : ""}`}>{t.label}</span>
               </Link>
             );
           })}
