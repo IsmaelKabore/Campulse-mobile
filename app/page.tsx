@@ -1,65 +1,102 @@
-import Image from "next/image";
+// app/page.tsx  (HomePage)
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import MockDeviceDemo from "./components/MockDeviceDemo";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/src/firebase/firebaseConfig";
+import { useRouter } from "next/navigation";
+
+type TaglineParts = { before: string; highlight: string; after: string };
+
+export default function HomePage() {
+  const [tagline, setTagline] = useState<TaglineParts>({
+    before: "Find the best",
+    highlight: "Events",
+    after: "around campus.",
+  });
+
+  const router = useRouter();
+  const [uid, setUid] = useState<string | null>(null);
+
+  // track auth just for landing CTA behavior
+  useEffect(() => {
+    const off = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
+    return () => off();
+  }, []);
+
+  const handleDemoClick = () => {
+    // tap/click on the device demo -> go where it makes sense
+    if (uid) router.push("/events");
+    else router.push("/sign-up");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center gap-6 px-4 py-6 sm:gap-8 sm:py-10">
+      {/* Device mock (tap = CTA) */}
+      <div className="w-full">
+        <div onClick={handleDemoClick} className="cursor-pointer">
+          <MockDeviceDemo
+            onAnswerShown={(t) => {
+              if (!t) return;
+              const toParts = (s: string): TaglineParts => {
+                if (/free food/i.test(s)) return { before: "Spot", highlight: "Free Food", after: "fast." };
+                if (/opportunit/i.test(s)) return { before: "Discover on-campus", highlight: "Opportunities", after: "" };
+                return { before: "Find your next", highlight: "Hangout", after: "" };
+              };
+              setTagline(toParts(t));
+            }}
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {/* Floating, synchronized headline */}
+      <motion.h1
+        key={`${tagline.before}-${tagline.highlight}-${tagline.after}`}
+        initial={{ opacity: 0, y: 8, scale: 0.98 }}
+        animate={{ opacity: 1, y: [0, -2, 0, 2, 0], scale: 1 }}
+        transition={{
+          duration: 0.5,
+          ease: [0.22, 0.55, 0.36, 1],
+          y: { duration: 2.6, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
+        }}
+        className="px-2 text-center text-[22px] font-semibold tracking-tight text-zinc-900 sm:text-5xl"
+      >
+        <span>{tagline.before} </span>
+        <span className="align-baseline text-[26px] font-semibold text-zinc-500 sm:text-6xl">
+          {tagline.highlight}
+        </span>
+        <span> {tagline.after}</span>
+      </motion.h1>
+
+      {/* CTAs */}
+      <div className="flex flex-col items-center gap-2 sm:gap-3">
+        <Link
+          href="/sign-up"
+          className="rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:px-6 sm:py-3 sm:text-base"
+        >
+          Try it out
+        </Link>
+        <Link
+          href="/login"
+          className="text-xs text-zinc-700 underline underline-offset-4 hover:opacity-80 sm:text-sm"
+        >
+          Already have an account? Sign in →
+        </Link>
+      </div>
+
+      {/* Footer */}
+      <footer className="pointer-events-none mt-6 w-full select-none text-center text-[11px] text-zinc-500 sm:mt-10">
+        <div className="flex items-center justify-center gap-3">
+          <span>Terms</span>
+          <span>·</span>
+          <span>Privacy</span>
+          <span>·</span>
+          <span>© 2025</span>
         </div>
-      </main>
-    </div>
+      </footer>
+    </main>
   );
 }
