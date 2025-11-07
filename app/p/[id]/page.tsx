@@ -56,7 +56,16 @@ export default function PostPage() {
 
   const timeLabel = useMemo(() => {
     if (!post?.eventDate) return "";
-    const d = post.eventDate?.toDate?.() ?? new Date(post.eventDate);
+    // Handle Firestore Timestamp, Date, or string/number
+    const getDate = (dateField: any): Date => {
+      if (!dateField) return new Date(0);
+      if (typeof dateField === 'object' && dateField.toDate) {
+        return dateField.toDate();
+      }
+      return new Date(dateField);
+    };
+    
+    const d = getDate(post.eventDate);
     if (isNaN(d.getTime())) return "";
     return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(d);
   }, [post]);

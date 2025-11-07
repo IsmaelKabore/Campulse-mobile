@@ -43,8 +43,17 @@ export default function EditPostPage() {
       setTitle(data.title ?? "");
       setLocation(data.location ?? "");
       setDescription(data.description ?? "");
-      if (data.eventDate?.toDate) {
-        const d = data.eventDate.toDate() as Date;
+      if (data.eventDate) {
+        // Handle Firestore Timestamp, Date, or string/number
+        const getDate = (dateField: any): Date => {
+          if (!dateField) return new Date();
+          if (typeof dateField === 'object' && dateField.toDate) {
+            return dateField.toDate();
+          }
+          return new Date(dateField);
+        };
+        
+        const d = getDate(data.eventDate);
         const iso = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
         setEventDate(iso);
       }

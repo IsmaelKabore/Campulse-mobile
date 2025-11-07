@@ -32,9 +32,18 @@ export default function FreeFoodPage() {
           });
         });
         rows.sort((a, b) => {
-          const da = a.eventDate?.toDate?.() ?? new Date(a.eventDate ?? 0);
-          const dbb = b.eventDate?.toDate?.() ?? new Date(b.eventDate ?? 0);
-          return +da - +dbb;
+          // Handle Firestore Timestamp, Date, or string/number
+          const getDate = (dateField: any): Date => {
+            if (!dateField) return new Date(0);
+            if (typeof dateField === 'object' && dateField.toDate) {
+              return dateField.toDate();
+            }
+            return new Date(dateField);
+          };
+          
+          const da = getDate(a.eventDate);
+          const db = getDate(b.eventDate);
+          return +da - +db;
         });
         setItems(rows);
         setLoading(false);
