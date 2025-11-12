@@ -1,7 +1,7 @@
 // app/page.tsx  (HomePage)
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import MockDeviceDemo from "./components/MockDeviceDemo";
@@ -22,10 +22,10 @@ export default function HomePage() {
   const [uid, setUid] = useState<string | null>(null);
 
   // track auth just for landing CTA behavior
-  useEffect(() => {
+  useState(() => {
     const off = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
     return () => off();
-  }, []);
+  });
 
   const handleDemoClick = () => {
     // tap/click on the device demo -> go where it makes sense
@@ -88,11 +88,11 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <footer className="pointer-events-none mt-6 w-full select-none text-center text-[11px] text-zinc-500 sm:mt-10">
+      <footer className="mt-6 w-full text-center text-[11px] text-zinc-500 sm:mt-10">
         <div className="flex items-center justify-center gap-3">
-          <span>Terms</span>
+          <Link href="/terms" className="hover:text-zinc-700 transition-colors">Terms</Link>
           <span>·</span>
-          <span>Privacy</span>
+          <Link href="/privacy" className="hover:text-zinc-700 transition-colors">Privacy</Link>
           <span>·</span>
           <span>© 2025</span>
         </div>

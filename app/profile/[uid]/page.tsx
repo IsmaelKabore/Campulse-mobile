@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import TopTabs from "@/app/components/TopTabs";
+import RequireAuth from "@/app/components/RequireAuth";
 import { auth, db, storage } from "@/src/firebase/firebaseConfig";
 import {
   collection,
@@ -216,21 +217,24 @@ export default function ProfilePage() {
 
   if (!uid) {
     return (
-      <main className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
-        <TopTabs active="events" />
-        <div className="mx-auto max-w-6xl p-4 animate-pulse">
-          <div className="h-40 rounded-3xl bg-zinc-200 dark:bg-zinc-800" />
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <div className="aspect-square bg-zinc-200 dark:bg-zinc-800" />
-            <div className="aspect-square bg-zinc-200 dark:bg-zinc-800" />
-            <div className="aspect-square bg-zinc-200 dark:bg-zinc-800" />
+      <RequireAuth blockWhenSignedOut={true} redirectTo="/login">
+        <main className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
+          <TopTabs active="events" />
+          <div className="mx-auto max-w-6xl p-4 animate-pulse">
+            <div className="h-40 rounded-3xl bg-zinc-200 dark:bg-zinc-800" />
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              <div className="aspect-square bg-zinc-200 dark:bg-zinc-800" />
+              <div className="aspect-square bg-zinc-200 dark:bg-zinc-800" />
+              <div className="aspect-square bg-zinc-200 dark:bg-zinc-800" />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </RequireAuth>
     );
   }
 
   return (
+    <RequireAuth blockWhenSignedOut={true} redirectTo="/login">
     <main className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
       <TopTabs active="events" />
 
@@ -579,6 +583,7 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
-    </main>
+      </main>
+    </RequireAuth>
   );
 }

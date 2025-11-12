@@ -100,8 +100,8 @@ export default function FloatingAI() {
   const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!draggingRef.current) return;
     const dy = e.clientY - startYRef.current;
-    // allow slight pull-up, cap pull-down
-    const next = Math.max(-40, Math.min(dy, window.innerHeight * 0.9));
+    // allow very slight pull-up, more gentle resistance on pull-down
+    const next = Math.max(-20, Math.min(dy * 0.8, window.innerHeight * 0.8));
     setDragY(next);
   };
   const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {

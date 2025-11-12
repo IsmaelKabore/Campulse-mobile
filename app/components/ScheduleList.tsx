@@ -9,7 +9,7 @@ export type ScheduleItem = {
   description: string;
   location: string;
   imageUrl: string | null;
-  eventDate: Date | string | number; // display-only here
+  eventDate: any;
   createdAt: any;
   saved?: boolean;
   likedCount?: number;
@@ -18,7 +18,7 @@ export type ScheduleItem = {
 type Props = {
   items: ScheduleItem[];
   emptyLabel?: string;
-  pageSize?: number; // default 12 (exact 3 columns x 4 rows)
+  pageSize?: number; // default 12 (3 rows x 4 pages, tweak as you like)
 };
 
 export default function ScheduleList({
@@ -36,7 +36,7 @@ export default function ScheduleList({
 
   if (!items.length) {
     return (
-      <div className="mx-auto w-full max-w-[1500px] px-6">
+      <div className="mx-auto w-full max-w-[1700px] px-6">
         <div className="grid place-items-center rounded-2xl border border-zinc-200 py-16 text-center">
           <div className="mb-3 text-6xl">🎟️</div>
           <p className="text-sm text-zinc-500">{emptyLabel}</p>
@@ -47,8 +47,8 @@ export default function ScheduleList({
 
   return (
     <div className="mx-auto w-full max-w-[1500px] px-6">
-      {/* EXACTLY 3 columns on md+; 1 on mobile */}
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+      {/* EXACTLY 3 COLUMNS on md+; 1 column on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {pageItems.map((it) => (
           <div key={it.id} className="h-full">
             <EventCard item={it} />

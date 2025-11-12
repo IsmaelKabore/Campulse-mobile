@@ -7,6 +7,7 @@ import { db } from "@/src/firebase/firebaseConfig";
 import TopTabs from "../components/TopTabs";
 import EventCard from "../components/EventCard";
 import { ScheduleItem } from "../components/ScheduleList";
+import RequireAuth from "../components/RequireAuth";
 
 export default function OpportunitiesPage() {
   const [items, setItems] = React.useState<ScheduleItem[]>([]);
@@ -57,20 +58,22 @@ export default function OpportunitiesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      <TopTabs active="opportunities" />
-      <main className="mx-auto max-w-5xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold">Opportunities</h1>
-        {loading && <div className="text-sm text-zinc-500">Loading…</div>}
+    <RequireAuth blockWhenSignedOut={true} redirectTo="/login">
+      <div className="min-h-screen bg-white text-zinc-900 /* dark:bg-zinc-900 dark:text-zinc-100 */">
+        <TopTabs active="opportunities" />
+        <main className="mx-auto max-w-5xl px-4 py-8">
+          <h1 className="mb-6 text-2xl font-bold">Opportunities</h1>
+          {loading && <div className="text-sm text-zinc-500">Loading…</div>}
 
-        {items.length === 0 ? (
-          <div className="text-sm text-zinc-500">No posts yet.</div>
-        ) : (
-          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((e) => <EventCard key={e.id} item={e} />)}
-          </div>
-        )}
-      </main>
-    </div>
+          {items.length === 0 ? (
+            <div className="text-sm text-zinc-500">No posts yet.</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
+              {items.map((e) => <EventCard key={e.id} item={e} />)}
+            </div>
+          )}
+        </main>
+      </div>
+    </RequireAuth>
   );
 }

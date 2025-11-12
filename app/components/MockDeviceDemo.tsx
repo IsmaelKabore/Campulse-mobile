@@ -125,9 +125,15 @@ export default function MockDeviceDemo({
             width={980}
             height={720}
             priority
-            className="pointer-events-none h-auto w-[900px] select-none"
+            className="pointer-events-none select-none h-auto w-[900px]"
           />
-          <OverlayWindow variant="ipad" phase={phase} typed={typed} i={i} scene={scene} />
+          <OverlayWindow
+            variant="ipad"
+            phase={phase}
+            typed={typed}
+            i={i}
+            scene={scene}
+          />
         </div>
 
         {/* iPhone on < lg */}
@@ -138,9 +144,15 @@ export default function MockDeviceDemo({
             width={420}
             height={860}
             priority
-            className="pointer-events-none h-auto w-[300px] select-none sm:w-[340px]"
+            className="pointer-events-none select-none h-auto w-[300px] sm:w-[340px]"
           />
-          <OverlayWindow variant="iphone" phase={phase} typed={typed} i={i} scene={scene} />
+          <OverlayWindow
+            variant="iphone"
+            phase={phase}
+            typed={typed}
+            i={i}
+            scene={scene}
+          />
         </div>
       </div>
     </div>
@@ -183,8 +195,9 @@ function OverlayWindow({
 
   return (
     <div className="pointer-events-none absolute inset-0">
+      {/* NOTE: added `relative` so the notch can sit above the status bar */}
       <div
-        className="pointer-events-auto relative overflow-hidden bg-white/98 shadow-sm ring-1 ring-black/10"
+        className="pointer-events-auto overflow-hidden bg-white/98 shadow-sm ring-1 ring-black/10 relative"
         style={style}
       >
         {/* Status bar */}
@@ -195,18 +208,6 @@ function OverlayWindow({
         >
           <span className="font-semibold">9:41</span>
           <div className={`flex items-center text-zinc-700 ${variant === "ipad" ? "gap-4" : "gap-3"}`}>
-            {/* signal */}
-            <svg
-              width={variant === "ipad" ? 24 : 18}
-              height={variant === "ipad" ? 14 : 10}
-              viewBox="0 0 18 10"
-              aria-hidden
-            >
-              <rect x="0" y="6" width="3" height="4" rx="1" />
-              <rect x="5" y="4" width="3" height="6" rx="1" />
-              <rect x="10" y="2" width="3" height="8" rx="1" />
-              <rect x="15" y="0" width="3" height="10" rx="1" />
-            </svg>
             {/* wifi */}
             <svg
               width={variant === "ipad" ? 22 : 16}
@@ -240,12 +241,17 @@ function OverlayWindow({
           </div>
         </div>
 
-        {/* iPhone “Dynamic Island” / notch overlay */}
+        {/* iPhone “Dynamic Island” / notch overlay (sits ABOVE the status bar) */}
         {variant === "iphone" && (
           <div
             className="
-              pointer-events-none absolute left-1/2 top-[6px] z-10 h-[22px] w-[96px]
-              -translate-x-1/2 rounded-[14px] bg-black/90 shadow-[0_1px_3px_rgba(0,0,0,0.35)]
+              pointer-events-none
+              absolute left-1/2 -translate-x-1/2
+              top-[6px]   /* tweak a couple px to match your PNG */
+              h-[22px] w-[96px] rounded-[14px]
+              bg-black/90
+              shadow-[0_1px_3px_rgba(0,0,0,0.35)]
+              z-10
             "
           />
         )}
@@ -254,8 +260,8 @@ function OverlayWindow({
         <div
           className={`min-h-0 flex flex-col bg-zinc-50 pb-4 pt-4 ${
             variant === "ipad"
-              ? "h-[calc(100%-40px)] gap-6 px-5 overflow-y-hidden"
-              : "h-[calc(100%-28px)] gap-5 px-3"
+              ? "h-[calc(100%-80px)] gap-6 px-5 overflow-y-hidden"  // More space for home indicator
+              : "h-[calc(100%-68px)] gap-5 px-3"  // More space for home indicator
           }`}
         >
           {/* user bubble (typewriter) */}
@@ -337,24 +343,24 @@ function OverlayWindow({
                     </div>
 
                     {/* text — slightly tighter on iPad */}
-                    <div className={variant === "ipad" ? "p-4" : "p-3"}>
+                    <div className={variant === "ipad" ? "p-4 bg-zinc-800" : "p-3 bg-zinc-800"}>
                       <div
-                        className={`font-semibold text-zinc-900 ${
-                          variant === "ipad" ? "text-[16px]" : "text-[13px]"
+                        className={`font-semibold ${
+                          variant === "ipad" ? "text-[16px] text-white" : "text-[13px] text-white"
                         }`}
                       >
                         {scene.answer.title}
                       </div>
                       <div
-                        className={`mt-0.5 text-zinc-500 ${
-                          variant === "ipad" ? "text-[13px]" : "text-[11px]"
+                        className={`mt-0.5 ${
+                          variant === "ipad" ? "text-[13px] text-zinc-300" : "text-[11px] text-zinc-300"
                         }`}
                       >
                         {scene.answer.when} · {scene.answer.where}
                       </div>
                       <p
-                        className={`mt-2 line-clamp-2 text-zinc-700 ${
-                          variant === "ipad" ? "text-[14px]" : "text-[12px]"
+                        className={`mt-2 line-clamp-2 ${
+                          variant === "ipad" ? "text-[14px] text-zinc-200" : "text-[12px] text-zinc-200"
                         }`}
                       >
                         {scene.answer.desc}
@@ -366,8 +372,8 @@ function OverlayWindow({
                           {scene.answer.likedBy.slice(0, 3).map((src) => (
                             <span
                               key={src}
-                              className={`inline-block overflow-hidden rounded-full ring-2 ring-white ${
-                                variant === "ipad" ? "h-6 w-6" : "h-6 w-6"
+                              className={`inline-block overflow-hidden rounded-full ${
+                                variant === "ipad" ? "h-6 w-6 ring-2 ring-zinc-600" : "h-6 w-6 ring-2 ring-zinc-600"
                               }`}
                             >
                               <Image
@@ -382,8 +388,8 @@ function OverlayWindow({
                           ))}
                         </div>
                         <div
-                          className={`text-zinc-500 ${
-                            variant === "ipad" ? "text-[13px]" : "text-[11px]"
+                          className={`${
+                            variant === "ipad" ? "text-[13px] text-zinc-400" : "text-[11px] text-zinc-400"
                           }`}
                         >
                           ♥ {scene.answer.likes.toLocaleString()}
@@ -395,6 +401,17 @@ function OverlayWindow({
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        {/* Home indicator bar for both iPhone and iPad */}
+        <div className="flex items-center justify-center bg-zinc-50 py-2">
+          <div
+            className={`rounded-full bg-zinc-400 ${
+              variant === "ipad" 
+                ? "h-[5px] w-[160px]"  // Slightly larger for iPad
+                : "h-[4px] w-[134px]"  // Original iPhone size
+            }`}
+          />
         </div>
       </div>
     </div>

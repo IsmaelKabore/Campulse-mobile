@@ -11,6 +11,7 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from "@/src/firebase/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import RequireAuth from "../components/RequireAuth";
 
 type Category = "events" | "free-food" | "opportunities";
 
@@ -98,102 +99,104 @@ export default function CreatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="h-14 px-4 border-b border-black/10 flex items-center justify-between bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70">
-        <Link href="/events" className="text-sm rounded-md px-3 py-1.5 ring-1 ring-black/10 hover:bg-gray-50 active:scale-95">
-          ← Back
-        </Link>
-        <div className="font-semibold">Create Post</div>
-        <div className="w-16" />
-      </div>
+    <RequireAuth blockWhenSignedOut={true} redirectTo="/login">
+      <div className="min-h-screen bg-white /* dark:bg-zinc-900 dark:text-zinc-100 */">
+        <div className="h-14 px-4 border-b border-black/10 /* dark:border-zinc-700 */ flex items-center justify-between bg-white/80 /* dark:bg-zinc-900/80 */ backdrop-blur supports-[backdrop-filter]:bg-white/70 /* dark:supports-[backdrop-filter]:bg-zinc-900/70 */">
+          <Link href="/events" className="text-sm rounded-md px-3 py-1.5 ring-1 ring-black/10 dark:ring-zinc-600 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95">
+            ← Back
+          </Link>
+          <div className="font-semibold">Create Post</div>
+          <div className="w-16" />
+        </div>
 
-      <main className="max-w-xl mx-auto p-4">
-        <form onSubmit={onSubmit} className="space-y-4">
-          <label className="text-sm font-medium">
-            Category
-            <select
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as Category)}
+        <main className="max-w-xl mx-auto p-4">
+          <form onSubmit={onSubmit} className="space-y-4">
+            <label className="text-sm font-medium">
+              Category
+              <select
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                value={category}
+                onChange={(e) => setCategory(e.target.value as Category)}
+              >
+                <option value="events">Events</option>
+                <option value="free-food">Free Food</option>
+                <option value="opportunities">Opportunities</option>
+              </select>
+            </label>
+
+            <label className="text-sm font-medium">
+              Title
+              <input
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Campus Hackathon 2025"
+                required
+              />
+            </label>
+
+            <label className="text-sm font-medium">
+              Location
+              <input
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Engineering Building"
+              />
+            </label>
+
+            <label className="text-sm font-medium">
+              Date & Time
+              <input
+                type="datetime-local"
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+              />
+            </label>
+
+            <label className="text-sm font-medium">
+              Tags (comma-separated)
+              <input
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="pizza, free, cs"
+              />
+            </label>
+
+            <label className="text-sm font-medium">
+              Description
+              <textarea
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+              />
+            </label>
+
+            <label className="text-sm font-medium">
+              Banner Image (optional)
+              <input
+                type="file"
+                accept="image/*"
+                className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 px-3 py-2"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
+
+            <button
+              type="submit"
+              disabled={saving}
+              className={`w-full rounded-md px-4 py-2 text-white transition active:scale-95 ${
+                saving ? "bg-gray-400" : "bg-black dark:bg-zinc-100 dark:text-zinc-900 hover:bg-neutral-800 dark:hover:bg-zinc-200"
+              }`}
             >
-              <option value="events">Events</option>
-              <option value="free-food">Free Food</option>
-              <option value="opportunities">Opportunities</option>
-            </select>
-          </label>
-
-          <label className="text-sm font-medium">
-            Title
-            <input
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Campus Hackathon 2025"
-              required
-            />
-          </label>
-
-          <label className="text-sm font-medium">
-            Location
-            <input
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Engineering Building"
-            />
-          </label>
-
-          <label className="text-sm font-medium">
-            Date & Time
-            <input
-              type="datetime-local"
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              value={eventDate}
-              onChange={(e) => setEventDate(e.target.value)}
-            />
-          </label>
-
-          <label className="text-sm font-medium">
-            Tags (comma-separated)
-            <input
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="pizza, free, cs"
-            />
-          </label>
-
-          <label className="text-sm font-medium">
-            Description
-            <textarea
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-            />
-          </label>
-
-          <label className="text-sm font-medium">
-            Banner Image (optional)
-            <input
-              type="file"
-              accept="image/*"
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            />
-          </label>
-
-          <button
-            type="submit"
-            disabled={saving}
-            className={`w-full rounded-md px-4 py-2 text-white transition active:scale-95 ${
-              saving ? "bg-gray-400" : "bg-black hover:bg-neutral-800"
-            }`}
-          >
-            {saving ? "Saving…" : "Create"}
-          </button>
-        </form>
-      </main>
-    </div>
+              {saving ? "Saving…" : "Create"}
+            </button>
+          </form>
+        </main>
+      </div>
+    </RequireAuth>
   );
 }

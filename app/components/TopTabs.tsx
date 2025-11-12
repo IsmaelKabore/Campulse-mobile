@@ -6,7 +6,6 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/src/firebase/firebaseConfig";
-import ThemeToggle from "./ThemeToggle";
 
 type Props = { active: "events" | "food" | "opportunities" };
 
@@ -31,12 +30,9 @@ export default function TopTabs({ active }: Props) {
 
   return (
     <header className="z-20">
-      {/* Row 1: theme toggle on left, controls on right (normal flow, NOT sticky) */}
+      {/* Row 1: controls on right (normal flow, NOT sticky) */}
       <div className="border-b border-zinc-200 bg-white/90">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div>
-            <ThemeToggle />
-          </div>
+        <div className="mx-auto flex max-w-6xl items-center justify-end px-4 py-3">
           <div className="flex items-center gap-2">
             <Link
               href={guardHref("/saved")}
