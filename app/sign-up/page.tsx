@@ -8,10 +8,10 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-function isEduEmail(email: string) {
+function isBerkeleyEmail(email: string) {
   const m = email.trim().toLowerCase().match(/^[^@]+@([^@]+)$/);
   const domain = m?.[1] || "";
-  return domain.endsWith(".edu");
+  return domain === "berkeley.edu";
 }
 
 const POLICIES_VERSION = "2025-11-11";
@@ -37,7 +37,7 @@ function PolicyModal({
       },
       {
         title: "2. Eligibility", 
-        content: "The Service is intended for students and collaborators. You must create an account with a .edu email address and be legally able to enter into these Terms."
+        content: "The Service is intended for UC Berkeley students and collaborators. You must create an account with a berkeley.edu email address and be legally able to enter into these Terms."
       },
       {
         title: "3. Accounts",
@@ -61,7 +61,7 @@ function PolicyModal({
       },
       {
         title: "2. Information We Collect",
-        content: "• Account Info: name, .edu email, profile photo (optional).\n• Content: posts you create (title, description, images, time/location).\n• Usage: interactions like likes/saves, basic device and log information.\n• Cookies/Local Storage: used to keep you signed in and remember preferences."
+        content: "• Account Info: name, berkeley.edu email, profile photo (optional).\n• Content: posts you create (title, description, images, time/location).\n• Usage: interactions like likes/saves, basic device and log information.\n• Cookies/Local Storage: used to keep you signed in and remember preferences."
       },
       {
         title: "3. How We Use Information", 
@@ -144,8 +144,8 @@ export default function SignUpPage() {
     e.preventDefault();
     setErr(null);
 
-    if (!isEduEmail(email)) {
-      setErr("Please sign up with a .edu email address.");
+    if (!isBerkeleyEmail(email)) {
+      setErr("Please sign up with a berkeley.edu email address.");
       return;
     }
     if (!agree) {
@@ -218,7 +218,7 @@ export default function SignUpPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">Email</label>
+          <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">Berkeley Email</label>
           <input
             type="email"
             required
@@ -226,7 +226,7 @@ export default function SignUpPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
-            placeholder="you@anycampus.edu"
+            placeholder="you@berkeley.edu"
           />
         </div>
 

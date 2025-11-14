@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { collection, onSnapshot, query, where, or } from "firebase/firestore";
 import { db } from "@/src/firebase/firebaseConfig";
 import TopTabs from "../components/TopTabs";
 import EventCard from "../components/EventCard";
@@ -14,7 +14,13 @@ export default function FreeFoodPage() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const qRef = query(collection(db, "posts"), where("category", "==", "free-food"));
+    const qRef = query(
+      collection(db, "posts"), 
+      or(
+        where("category", "==", "free-food"),
+        where("hasFreeFood", "==", true)
+      )
+    );
     const unsub = onSnapshot(
       qRef,
       (snap) => {

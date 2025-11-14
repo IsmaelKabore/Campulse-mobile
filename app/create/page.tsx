@@ -27,6 +27,7 @@ export default function CreatePage() {
   const [eventDate, setEventDate] = useState(""); // datetime-local string
   const [tags, setTags] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [hasFreeFood, setHasFreeFood] = useState(false);
   const [saving, setSaving] = useState(false);
 
   // require auth
@@ -67,6 +68,7 @@ export default function CreatePage() {
         eventDate: ed ?? serverTimestamp(),
         createdAt: serverTimestamp(),
         likedCount: 0,
+        hasFreeFood,
 
         authorId: uid,
         authorName,
@@ -163,6 +165,16 @@ export default function CreatePage() {
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="pizza, free, cs"
               />
+            </label>
+
+            <label className="flex items-center space-x-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={hasFreeFood}
+                onChange={(e) => setHasFreeFood(e.target.checked)}
+                className="rounded border-gray-200 dark:border-zinc-600"
+              />
+              <span>This event includes free food</span>
             </label>
 
             <label className="text-sm font-medium">

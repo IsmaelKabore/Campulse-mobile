@@ -73,35 +73,32 @@ export default function MockDeviceDemo({
   const [i, setI] = React.useState(0);
   const scene = scenes[i % scenes.length];
 
-  const [typed, setTyped] = React.useState("");
-  const [phase, setPhase] = React.useState<"typing" | "thinking" | "answer">("typing");
+  const [showNotification, setShowNotification] = React.useState(false);
+  const [phase, setPhase] = React.useState<"writing" | "answer">("writing");
 
-  // cycle scenes with: type (LTR) -> thinking -> answer (float 5s) -> next
+  // cycle scenes with immediate writing appearance -> notification popup -> next
   React.useEffect(() => {
     let stop = false;
-    setTyped("");
-    setPhase("typing");
+    setPhase("writing");
+    setShowNotification(false);
 
     const run = async () => {
-      // TYPE (left to right)
-      const chars = scene.q.split("");
-      for (let k = 0; k <= chars.length; k++) {
-        if (stop) return;
-        setTyped(chars.slice(0, k).join(""));
-        await wait(32);
-      }
-
-      // THINK
-      setPhase("thinking");
-      await wait(700);
+      // Show writing immediately (no typewriter)
+      await wait(800);
       if (stop) return;
 
-      // ANSWER + notify page for tagline
+      // Show notification popup
       setPhase("answer");
+      setShowNotification(true);
       onAnswerShown?.(scene.tagline);
 
-      // Let both the bubble & the card float gently for ~5s
-      await wait(5000);
+      // Keep notification visible for ~4s
+      await wait(4000);
+      if (stop) return;
+
+      // Fade out and move to next
+      setShowNotification(false);
+      await wait(500);
       if (stop) return;
 
       setI((x) => x + 1);
@@ -130,7 +127,7 @@ export default function MockDeviceDemo({
           <OverlayWindow
             variant="ipad"
             phase={phase}
-            typed={typed}
+            showNotification={showNotification}
             i={i}
             scene={scene}
           />
@@ -149,7 +146,7 @@ export default function MockDeviceDemo({
           <OverlayWindow
             variant="iphone"
             phase={phase}
-            typed={typed}
+            showNotification={showNotification}
             i={i}
             scene={scene}
           />
@@ -163,13 +160,13 @@ export default function MockDeviceDemo({
 function OverlayWindow({
   variant,
   phase,
-  typed,
+  showNotification,
   i,
   scene,
 }: {
   variant: "iphone" | "ipad";
-  phase: "typing" | "thinking" | "answer";
-  typed: string;
+  phase: "writing" | "answer";
+  showNotification: boolean;
   i: number;
   scene: Scene;
 }) {
@@ -264,15 +261,20 @@ function OverlayWindow({
               : "h-[calc(100%-68px)] gap-5 px-3"  // More space for home indicator
           }`}
         >
-          {/* user bubble (typewriter) */}
+          {/* user message bubble (popup animation) */}
           <motion.div
             key={`q-${i}`}
-            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
             animate={{
               opacity: 1,
               y: 0,
               scale: 1,
-              transition: { type: "spring", stiffness: 260, damping: 22 },
+              transition: { 
+                type: "spring", 
+                stiffness: 350, 
+                damping: 20,
+                mass: 0.8 
+              },
             }}
             className={`ml-auto max-w-[86%] rounded-2xl bg-zinc-900 px-3 py-2 font-medium text-white ${
               variant === "ipad" ? "text-[16px] px-4 py-2.5" : "text-[13px]"
@@ -280,54 +282,61 @@ function OverlayWindow({
             dir="ltr"
           >
             <motion.span
-              className="inline-block"
-              animate={phase === "answer" ? { y: [0, -1.5, 0, 1.5, 0] } : {}}
-              transition={phase === "answer" ? { duration: 3.2, repeat: 1, ease: "easeInOut" } : undefined}
+              animate={{ 
+                y: [0, -1, 0],
+                scale: [1, 1.02, 1]
+              }}
+              transition={{ 
+                duration: 2, 
+                repeat: Infinity, 
+                ease: "easeInOut" 
+              }}
             >
-              {typed || "\u00A0"}
+              {scene.q}
             </motion.span>
-            {phase === "typing" && <span className="ml-1 align-baseline">▍</span>}
           </motion.div>
 
-          {/* searching*/}
-          <AnimatePresence>
-            {phase === "thinking" && (
-              <motion.div
-                key={`think-${i}`}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className={`flex items-center gap-2 pl-1 text-zinc-500 ${
-                  variant === "ipad" ? "text-[15px]" : "text-[12px]"
-                }`}
-              >
-                <div
-                  className={`animate-spin rounded-full border-2 border-zinc-300 border-t-black ${
-                    variant === "ipad" ? "h-5 w-5" : "h-4 w-4"
-                  }`}
-                />
-                Searching…
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* siri-like single card answer */}
+          {/* Bouncy notification popup */}
           <AnimatePresence mode="popLayout">
-            {phase === "answer" && (
+            {showNotification && (
               <motion.div
-                key={`a-${i}`}
-                initial={{ opacity: 0, y: 14, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ type: "spring", stiffness: 250, damping: 20 }}
+                key={`notification-${i}`}
+                initial={{ opacity: 0, y: -30, scale: 0.8 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0, 
+                  scale: 1,
+                  transition: { 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 15,
+                    mass: 0.8
+                  }
+                }}
+                exit={{ 
+                  opacity: 0, 
+                  y: -20, 
+                  scale: 0.95,
+                  transition: { duration: 0.3, ease: "easeInOut" }
+                }}
+                className="w-full"
               >
                 <motion.div
-                  animate={{ y: [-2, 2, -2] }}
-                  transition={{ duration: 3.2, repeat: 1, ease: "easeInOut" }}
-                  className="mx-auto w-full"
+                  animate={{ 
+                    y: [0, -8, 2, -5, 0, 3, -2, 0],
+                    x: [0, 1, -1, 2, -1, 0],
+                    rotate: [0, 0.8, -0.5, 1, -0.8, 0.3, 0],
+                    scale: [1, 1.02, 0.98, 1.01, 0.99, 1]
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    times: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1]
+                  }}
                 >
                   <div className="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-black/10">
-                    {/* image — SHORTER on iPad so the full card fits without scroll */}
+                    {/* image — original size */}
                     <div
                       className={`relative w-full bg-zinc-100 ${
                         variant === "ipad" ? "aspect-[20/8]" : "aspect-square"
@@ -342,7 +351,7 @@ function OverlayWindow({
                       />
                     </div>
 
-                    {/* text — slightly tighter on iPad */}
+                    {/* content */}
                     <div className={variant === "ipad" ? "p-4 bg-zinc-800" : "p-3 bg-zinc-800"}>
                       <div
                         className={`font-semibold ${
@@ -366,7 +375,7 @@ function OverlayWindow({
                         {scene.answer.desc}
                       </p>
 
-                      {/* likes strip — smaller avatars on iPad to save height */}
+                      {/* likes strip */}
                       <div className="mt-3 flex items-center justify-between">
                         <div className="flex -space-x-2">
                           {scene.answer.likedBy.slice(0, 3).map((src) => (
