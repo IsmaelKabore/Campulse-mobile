@@ -129,8 +129,8 @@ export default function PostPage() {
 
       <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
         {post.imageUrl && (
-          <div className="relative aspect-[4/2] w-full">
-            <Image src={post.imageUrl} alt={post.title} fill className="object-cover" unoptimized />
+          <div className="relative w-full aspect-video">
+            <Image src={post.imageUrl} alt={post.title} fill className="object-contain bg-zinc-50" unoptimized />
           </div>
         )}
         <div className="space-y-2 p-4">

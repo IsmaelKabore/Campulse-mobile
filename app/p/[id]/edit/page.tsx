@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { auth, db, storage } from "@/src/firebase/firebaseConfig";
-import { doc, getDoc, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { doc, getDoc, serverTimestamp, Timestamp, updateDoc, deleteDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
 
 type Category = "events" | "free-food" | "opportunities";
 
@@ -16,6 +16,7 @@ export default function EditPostPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [category, setCategory] = useState<Category>("events");
   const [title, setTitle] = useState("");
@@ -90,6 +91,40 @@ export default function EditPostPage() {
       alert("Failed to save");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmed = confirm("Are you sure you want to delete this post? This action cannot be undone.");
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      const snap = await getDoc(doc(db, "posts", id));
+      const data = snap.data() as any;
+      
+      // Delete image from storage if exists
+      if (data?.imagePath) {
+        try {
+          await deleteObject(ref(storage, data.imagePath));
+        } catch (e) {
+          console.warn("Failed to delete image from storage:", e);
+        }
+      }
+
+      // Delete post document
+      await deleteDoc(doc(db, "posts", id));
+
+      // Redirect to profile
+      if (auth.currentUser?.uid) {
+        router.push(`/profile/${auth.currentUser.uid}`);
+      } else {
+        router.push("/events");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to delete post");
+      setDeleting(false);
     }
   };
 
@@ -171,14 +206,31 @@ export default function EditPostPage() {
 
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || deleting}
             className={`w-full rounded-md px-4 py-2 text-white transition active:scale-95 ${
-              saving ? "bg-gray-400" : "bg-black hover:bg-neutral-800"
+              saving || deleting ? "bg-gray-400" : "bg-black hover:bg-neutral-800"
             }`}
           >
             {saving ? "Saving…" : "Save"}
           </button>
         </form>
+
+        {/* Delete button */}
+        <div className="mt-8 border-t border-gray-200 pt-6">
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleting || saving}
+            className={`w-full rounded-md px-4 py-2 font-semibold text-white transition active:scale-95 ${
+              deleting || saving ? "bg-red-300" : "bg-red-600 hover:bg-red-700"
+            }`}
+          >
+            {deleting ? "Deleting…" : "Delete Post"}
+          </button>
+          <p className="mt-2 text-center text-xs text-gray-500">
+            This action cannot be undone
+          </p>
+        </div>
       </main>
     </div>
   );

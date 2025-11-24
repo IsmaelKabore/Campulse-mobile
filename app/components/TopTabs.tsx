@@ -145,7 +145,7 @@ export default function TopTabs({ active }: Props) {
       </div>
 
       {/* MOBILE bottom tabs fixed */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-zinc-200 bg-white/95 backdrop-blur">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-zinc-200 bg-white/95 backdrop-blur safe-area-inset-bottom">
         <div className="mx-auto max-w-3xl grid grid-cols-3 text-center">
           {tabs.map((t) => {
             const isActive = active === t.key;
@@ -153,11 +153,11 @@ export default function TopTabs({ active }: Props) {
               <Link
                 key={t.key}
                 href={guardHref(t.href)}
-                className={`flex flex-col items-center justify-center py-2 text-xs font-medium
-                  ${isActive ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-800"}`}
+                className={`flex flex-col items-center justify-center py-3 text-xs font-medium transition-colors
+                  ${isActive ? "text-zinc-900" : "text-zinc-500"}`}
               >
-                <span className="text-lg">{t.icon}</span>
-                <span className={`mt-0.5 ${isActive ? "underline underline-offset-4" : ""}`}>{t.label}</span>
+                <span className="text-xl mb-1">{t.icon}</span>
+                <span className={isActive ? "font-semibold" : ""}>{t.label}</span>
               </Link>
             );
           })}
