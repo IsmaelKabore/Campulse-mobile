@@ -145,7 +145,7 @@ export default function TopTabs({ active }: Props) {
       </div>
 
       {/* MOBILE bottom tabs fixed */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-zinc-200 bg-white/95 backdrop-blur safe-area-inset-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white backdrop-blur-md shadow-[0_-2px_10px_rgba(0,0,0,0.1)]" style={{ position: 'fixed' }}>
         <div className="mx-auto max-w-3xl grid grid-cols-3 text-center">
           {tabs.map((t) => {
             const isActive = active === t.key;

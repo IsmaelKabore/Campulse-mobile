@@ -67,7 +67,7 @@ export default function FreeFoodPage() {
     <RequireAuth blockWhenSignedOut={true} redirectTo="/login">
       <div className="min-h-screen bg-white text-zinc-900 /* dark:bg-zinc-900 dark:text-zinc-100 */">
         <TopTabs active="food" />
-        <main className="mx-auto max-w-5xl px-4 py-8">
+        <main className="mx-auto max-w-5xl px-4 py-8 pb-24 lg:pb-8">
           <h1 className="mb-6 text-2xl font-bold">Free Food</h1>
           {loading && <div className="text-sm text-zinc-500">Loading…</div>}
 
