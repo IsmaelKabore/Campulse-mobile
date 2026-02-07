@@ -13,6 +13,11 @@ export type ScheduleItem = {
   createdAt: any;
   saved?: boolean;
   likedCount?: number;
+  author?: {
+    uid: string;
+    name?: string;
+    photoURL?: string | null;
+  };
 };
 
 type Props = {

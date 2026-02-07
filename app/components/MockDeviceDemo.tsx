@@ -111,45 +111,66 @@ export default function MockDeviceDemo({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i]);
 
+  const [deviceLoaded, setDeviceLoaded] = React.useState(false);
+  const [overlayReady, setOverlayReady] = React.useState(false);
+
+  React.useEffect(() => {
+    // Small delay to ensure device frame is rendered before overlay
+    if (deviceLoaded) {
+      const timer = setTimeout(() => setOverlayReady(true), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [deviceLoaded]);
+
   return (
     <div className="mx-auto w-full max-w-[1100px]">
       <div className="relative mx-auto grid place-items-center">
         {/* iPad on lg+ */}
         <div className="relative hidden lg:block">
-          <Image
-            src="/mockups/iPad.png"
-            alt="iPad"
-            width={980}
-            height={720}
-            priority
-            className="pointer-events-none select-none h-auto w-[900px]"
-          />
-          <OverlayWindow
-            variant="ipad"
-            phase={phase}
-            showNotification={showNotification}
-            i={i}
-            scene={scene}
-          />
+          <div className={`transition-opacity duration-300 ${deviceLoaded ? 'opacity-100' : 'opacity-0'}`}>
+            <Image
+              src="/mockups/iPad.png"
+              alt="iPad"
+              width={980}
+              height={720}
+              priority
+              className="pointer-events-none select-none h-auto w-[900px]"
+              onLoad={() => setDeviceLoaded(true)}
+            />
+          </div>
+          {overlayReady && (
+            <OverlayWindow
+              variant="ipad"
+              phase={phase}
+              showNotification={showNotification}
+              i={i}
+              scene={scene}
+            />
+          )}
         </div>
 
         {/* iPhone on < lg */}
         <div className="relative block lg:hidden">
-          <Image
-            src="/mockups/iphone.png"
-            alt="iPhone"
-            width={420}
-            height={860}
-            priority
-            className="pointer-events-none select-none h-auto w-[300px] sm:w-[340px]"
-          />
-          <OverlayWindow
-            variant="iphone"
-            phase={phase}
-            showNotification={showNotification}
-            i={i}
-            scene={scene}
-          />
+          <div className={`transition-opacity duration-300 ${deviceLoaded ? 'opacity-100' : 'opacity-0'}`}>
+            <Image
+              src="/mockups/iphone.png"
+              alt="iPhone"
+              width={420}
+              height={860}
+              priority
+              className="pointer-events-none select-none h-auto w-[300px] sm:w-[340px]"
+              onLoad={() => setDeviceLoaded(true)}
+            />
+          </div>
+          {overlayReady && (
+            <OverlayWindow
+              variant="iphone"
+              phase={phase}
+              showNotification={showNotification}
+              i={i}
+              scene={scene}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -281,19 +302,7 @@ function OverlayWindow({
             }`}
             dir="ltr"
           >
-            <motion.span
-              animate={{ 
-                y: [0, -1, 0],
-                scale: [1, 1.02, 1]
-              }}
-              transition={{ 
-                duration: 2, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
-            >
-              {scene.q}
-            </motion.span>
+            {scene.q}
           </motion.div>
 
           {/* Bouncy notification popup */}
@@ -322,17 +331,11 @@ function OverlayWindow({
                 className="w-full"
               >
                 <motion.div
-                  animate={{ 
-                    y: [0, -8, 2, -5, 0, 3, -2, 0],
-                    x: [0, 1, -1, 2, -1, 0],
-                    rotate: [0, 0.8, -0.5, 1, -0.8, 0.3, 0],
-                    scale: [1, 1.02, 0.98, 1.01, 0.99, 1]
-                  }}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ 
-                    duration: 6, 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    times: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1]
+                    duration: 0.4,
+                    ease: [0.22, 1, 0.36, 1]
                   }}
                 >
                   <div className="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-black/10">

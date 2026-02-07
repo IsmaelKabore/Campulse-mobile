@@ -34,7 +34,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center gap-6 px-4 py-6 sm:gap-8 sm:py-10">
+    <main className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center gap-6 px-4 py-6 sm:gap-8 sm:py-10 bg-white dark:bg-zinc-900">
       {/* Device mock (tap = CTA) */}
       <div className="w-full">
         <div onClick={handleDemoClick} className="cursor-pointer">
@@ -62,10 +62,10 @@ export default function HomePage() {
           ease: [0.22, 0.55, 0.36, 1],
           y: { duration: 2.6, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
         }}
-        className="px-2 text-center text-[22px] font-semibold tracking-tight text-zinc-900 sm:text-5xl"
+        className="px-2 text-center text-[22px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl"
       >
         <span>{tagline.before} </span>
-        <span className="align-baseline text-[26px] font-semibold text-zinc-500 sm:text-6xl">
+        <span className="align-baseline text-[26px] font-semibold text-zinc-500 dark:text-zinc-400 sm:text-6xl">
           {tagline.highlight}
         </span>
         <span> {tagline.after}</span>
@@ -81,18 +81,18 @@ export default function HomePage() {
         </Link>
         <Link
           href="/login"
-          className="text-xs text-zinc-700 underline underline-offset-4 hover:opacity-80 sm:text-sm"
+          className="text-xs text-zinc-700 dark:text-zinc-300 underline underline-offset-4 hover:opacity-80 sm:text-sm"
         >
           Already have an account? Sign in →
         </Link>
       </div>
 
       {/* Footer */}
-      <footer className="mt-6 w-full text-center text-[11px] text-zinc-500 sm:mt-10">
+      <footer className="mt-6 w-full text-center text-[11px] text-zinc-500 dark:text-zinc-400 sm:mt-10">
         <div className="flex items-center justify-center gap-3">
-          <Link href="/terms" className="hover:text-zinc-700 transition-colors">Terms</Link>
+          <Link href="/terms" className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">Terms</Link>
           <span>·</span>
-          <Link href="/privacy" className="hover:text-zinc-700 transition-colors">Privacy</Link>
+          <Link href="/privacy" className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">Privacy</Link>
           <span>·</span>
           <span>© 2025</span>
         </div>

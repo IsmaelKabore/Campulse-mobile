@@ -266,14 +266,14 @@ export default function FloatingAI() {
 
   return (
     <>
-      {/* Trigger — bottom-right; above tab row on small screens */}
+      {/* Trigger — attached to bottom on mobile, floating on desktop */}
       <button
         onClick={() => { setOpen(true); setDragY(0); }}
         className="
-          fixed z-40 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg active:scale-95
-          bg-black hover:bg-neutral-800
-          right-3 bottom-[88px]   /* tweak to sit above your tabs */
-          md:bottom-5 md:right-5
+          fixed z-40 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg active:scale-95
+          bg-black hover:bg-neutral-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100
+          right-3 bottom-[88px] lg:bottom-5 lg:right-5
+          transition-colors
         "
         aria-label="Ask AI"
         title="Ask AI"

@@ -131,21 +131,21 @@ export default function EditPostPage() {
   if (loading) return <main className="p-6">Loading…</main>;
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="h-14 px-4 border-b border-black/10 flex items-center justify-between bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70">
-        <Link href={`/p/${id}`} className="text-sm rounded-md px-3 py-1.5 ring-1 ring-black/10 hover:bg-gray-50 active:scale-95">
+    <div className="min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-100">
+      <div className="h-14 px-4 border-b border-black/10 dark:border-zinc-800 flex items-center justify-between bg-white/80 dark:bg-zinc-950/80 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-zinc-950/70">
+        <Link href={`/p/${id}`} className="text-sm rounded-md px-3 py-1.5 ring-1 ring-black/10 dark:ring-zinc-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95">
           ← Back
         </Link>
-        <div className="font-semibold">Edit Post</div>
+        <div className="font-semibold text-zinc-900 dark:text-zinc-100">Edit Post</div>
         <div className="w-16" />
       </div>
 
       <main className="max-w-xl mx-auto p-4">
         <form onSubmit={onSubmit} className="space-y-4">
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
             Category
             <select
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
+              className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2"
               value={category}
               onChange={(e) => setCategory(e.target.value as Category)}
             >
@@ -155,51 +155,51 @@ export default function EditPostPage() {
             </select>
           </label>
 
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
             Title
             <input
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
+              className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
           </label>
 
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
             Location
             <input
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
+              className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
           </label>
 
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
             Date & Time
             <input
               type="datetime-local"
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
+              className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2"
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
             />
           </label>
 
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
             Description
             <textarea
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
+              className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
             />
           </label>
 
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
             Replace Banner (optional)
             <input
               type="file"
               accept="image/*"
-              className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2"
+              className="mt-1 w-full rounded-md border border-gray-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
           </label>
@@ -208,7 +208,7 @@ export default function EditPostPage() {
             type="submit"
             disabled={saving || deleting}
             className={`w-full rounded-md px-4 py-2 text-white transition active:scale-95 ${
-              saving || deleting ? "bg-gray-400" : "bg-black hover:bg-neutral-800"
+              saving || deleting ? "bg-gray-400 dark:bg-zinc-700" : "bg-black hover:bg-neutral-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
             }`}
           >
             {saving ? "Saving…" : "Save"}
@@ -216,18 +216,18 @@ export default function EditPostPage() {
         </form>
 
         {/* Delete button */}
-        <div className="mt-8 border-t border-gray-200 pt-6">
+        <div className="mt-8 border-t border-gray-200 dark:border-zinc-800 pt-6">
           <button
             type="button"
             onClick={handleDelete}
             disabled={deleting || saving}
             className={`w-full rounded-md px-4 py-2 font-semibold text-white transition active:scale-95 ${
-              deleting || saving ? "bg-red-300" : "bg-red-600 hover:bg-red-700"
+              deleting || saving ? "bg-red-300 dark:bg-red-900" : "bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
             }`}
           >
             {deleting ? "Deleting…" : "Delete Post"}
           </button>
-          <p className="mt-2 text-center text-xs text-gray-500">
+          <p className="mt-2 text-center text-xs text-gray-500 dark:text-zinc-400">
             This action cannot be undone
           </p>
         </div>

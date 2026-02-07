@@ -185,12 +185,12 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center p-6 /* dark:text-zinc-100 */">
-      <h1 className="mb-6 text-2xl font-semibold">Create account</h1>
+    <main className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center p-6 bg-white dark:bg-zinc-900 dark:text-zinc-100">
+      <h1 className="mb-6 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Create account</h1>
 
       <form
         onSubmit={onSubmit}
-        className="space-y-4 rounded-2xl border border-zinc-200 /* dark:border-zinc-700 */ bg-white /* dark:bg-zinc-800 */ p-5 shadow-sm"
+        className="space-y-4 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-5 shadow-sm"
       >
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">

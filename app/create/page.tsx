@@ -80,6 +80,10 @@ export default function CreatePage() {
       });
 
       if (file) {
+        // Ensure user is authenticated before uploading
+        if (!auth.currentUser) {
+          throw new Error("User not authenticated");
+        }
         const path = `posts/${postRef.id}/banner-${Date.now()}-${file.name}`;
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, file);
@@ -102,12 +106,12 @@ export default function CreatePage() {
 
   return (
     <RequireAuth blockWhenSignedOut={true} redirectTo="/login">
-      <div className="min-h-screen bg-white /* dark:bg-zinc-900 dark:text-zinc-100 */">
-        <div className="h-14 px-4 border-b border-black/10 /* dark:border-zinc-700 */ flex items-center justify-between bg-white/80 /* dark:bg-zinc-900/80 */ backdrop-blur supports-[backdrop-filter]:bg-white/70 /* dark:supports-[backdrop-filter]:bg-zinc-900/70 */">
-          <Link href="/events" className="text-sm rounded-md px-3 py-1.5 ring-1 ring-black/10 dark:ring-zinc-600 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95">
+      <div className="min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-100">
+        <div className="h-14 px-4 border-b border-black/10 dark:border-zinc-800 flex items-center justify-between bg-white/80 dark:bg-zinc-950/80 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-zinc-950/70">
+          <Link href="/events" className="text-sm rounded-md px-3 py-1.5 ring-1 ring-black/10 dark:ring-zinc-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95">
             ← Back
           </Link>
-          <div className="font-semibold">Create Post</div>
+          <div className="font-semibold text-zinc-900 dark:text-zinc-100">Create Post</div>
           <div className="w-16" />
         </div>
 
