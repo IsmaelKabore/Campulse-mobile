@@ -9,6 +9,9 @@
 .history
 .svn/
 migrate_working_dir/
+android/key.properties
+android/app/*.keystore
+ios/Runner/GoogleService-Info.plist
 
 # IntelliJ related
 *.iml
@@ -47,6 +50,18 @@ app.*.map.json
 **/google-services.json
 **/GoogleService-Info.plist
 lib/firebase_options.dart
+
+# Environment variables (contains sensitive keys)
+.env
+.env.local
+.env.*.local
+
+# Keystore files (all locations)
+*.keystore
+*.jks
+**/key.properties
+android/app/*.keystore
+android/*.keystore
 
 # Web-related (should not exist, but just in case)
 node_modules/

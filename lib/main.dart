@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:campulse_mobile/firebase_options.dart';
 import 'package:campulse_mobile/providers/auth_provider.dart' as app_auth;
 import 'package:campulse_mobile/providers/post_provider.dart';
@@ -16,6 +17,19 @@ import 'package:campulse_mobile/models/post.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load environment variables from .env file
+  try {
+    await dotenv.load(fileName: '.env');
+    debugPrint('Environment variables loaded successfully');
+  } catch (e) {
+    debugPrint('⚠️ Warning: Could not load .env file: $e');
+    debugPrint('Make sure .env file exists in the project root');
+    // In production, this should fail fast
+    if (!kDebugMode) {
+      throw Exception('Failed to load environment variables: $e');
+    }
+  }
   
   // Initialize Firebase only if not already initialized
   // This prevents duplicate initialization during hot reload/restart
